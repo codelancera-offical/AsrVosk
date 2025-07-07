@@ -56,7 +56,6 @@ class AsrVosk:
         self.model = Model(model_path)
         self.sample_rate = sample_rate
         self.rec = KaldiRecognizer(self.model, self.sample_rate)
-        self.p = pyaudio.PyAudio()
         self.stream = None
         # 构建热词序列对象列表
         self.hotword_sequences = []
@@ -65,6 +64,7 @@ class AsrVosk:
             self.hotword_sequences.append(HotwordSequence(word, pinyin_seq, signal))
 
     def start(self):
+        self.p = pyaudio.PyAudio() # 改到这里初始化音频设备
         self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=self.sample_rate, input=True, frames_per_buffer=4096)
         self.stream.start_stream()
 
@@ -72,7 +72,7 @@ class AsrVosk:
         if self.stream is not None:
             self.stream.stop_stream()
             self.stream.close()
-        self.p.terminate()
+        self.p.terminate() # 这里断开与音频涉笔的连接
 
     def listen_for_hotword(self):
         """
@@ -95,8 +95,12 @@ class AsrVosk:
                 # 多热词并发检测
                 for seq in self.hotword_sequences:
                     if seq.match(pinyin_stream):
+                        self.rec.Reset() # 
                         self.stop()
                         return seq.signal
+                # 如果Pinyin_stream超过15仍然没有识别到
+                if len(pinyin_stream) > 15:
+                    self.rec.Reset()
         finally:
             self.stop()
 
