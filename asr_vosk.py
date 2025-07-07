@@ -87,11 +87,13 @@ class AsrVosk:
                 result = self.rec.PartialResult()
                 try:
                     text = json.loads(result).get('partial', '')
-                    print(f"中间结果：{text}")
                 except Exception:
                     text = ''
                 pinyin_stream = lazy_pinyin(text)
-                print(f"拼音流：{pinyin_stream}")
+                # 构建输出信息
+                output_text = f"中间结果：{text}  拼音流：{pinyin_stream}"
+                # 使用空格填充确保完全覆盖上一行
+                print(output_text)
                 # 多热词并发检测
                 for seq in self.hotword_sequences:
                     if seq.match(pinyin_stream):
