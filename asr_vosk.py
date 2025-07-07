@@ -72,7 +72,7 @@ class AsrVosk:
         if self.stream is not None:
             self.stream.stop_stream()
             self.stream.close()
-        self.p.terminate() # 这里断开与音频涉笔的连接
+        self.p.terminate() # 这里断开与音频设备的连接
 
     def listen_for_hotword(self):
         """
