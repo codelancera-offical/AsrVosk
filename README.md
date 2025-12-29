@@ -6,15 +6,17 @@
 
 ## Architectural Logic
 
-The core of this component utilizes a **Pointer-based State Machine** matching algorithm, shifting beyond simple text comparison to ensure robustness:
+The core of this component utilizes a **Pointer-based State Machine** matching algorithm rather than simple text comparison:
 
-* **Phonetic Decoupling**: Intermediate results from the ASR (Partial Results) are converted into Pinyin streams in real-time to eliminate interference caused by homophones.
-* **Concurrent State Pointers**: The system maintains an independent `HotwordSequence` pointer for every pre-defined hotword.
-* **Streaming Sequence Matching**:
-* **Forward Progression**: Pointers advance unidirectionally as the Pinyin sequence from the speech stream matches the target hotword.
-* **Intelligent Reset**: If a mismatch occurs, the pointer resets to `0`. However, if the mismatched character happens to be the starting syllable of the hotword, the pointer intelligently rolls back to `1`.
-* **Overlap Support**: This logic allows for the detection of partially overlapping hotword patterns, significantly reducing the miss rate.
-* **Resource Scheduling**: The detector operates in a single-threaded blocking mode, utilizing a signal mechanism to interrupt and return immediately upon a successful match.
+1. **Phonetic Decoupling**: Intermediate ASR results (Partial Results) are converted into Pinyin streams in real-time, effectively shielding the system from recognition interference caused by homophones.
+2. **Concurrent State Pointers**: An independent `HotwordSequence` pointer is maintained for every pre-defined hotword.
+3. **Streaming Sequence Matching**:
+    * **Forward Progression**: The pointer advances unidirectionally as the Pinyin sequence from the speech stream matches the target hotword syllables one by one.
+    * **Intelligent Rollback**: If a mismatch occurs and the current character is not the starting syllable of the hotword, the pointer resets to 0; however, if the mismatched character happens to be the starting syllable, the pointer rolls back to 1.
+    * **Advantages**: This design supports partially overlapping hotword patterns, significantly reducing the miss rate.
+
+
+4. **Resource Scheduling**: The system employs a single-threaded blocking listener, utilizing a signal mechanism to interrupt and return immediately upon a successful match.
 
 ![ARSVOSK-ARCH](ASRVOSK.png)
 
