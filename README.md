@@ -14,9 +14,9 @@ The core of this component utilizes a **Pointer-based State Machine** matching a
 * **Forward Progression**: Pointers advance unidirectionally as the Pinyin sequence from the speech stream matches the target hotword.
 * **Intelligent Reset**: If a mismatch occurs, the pointer resets to `0`. However, if the mismatched character happens to be the starting syllable of the hotword, the pointer intelligently rolls back to `1`.
 * **Overlap Support**: This logic allows for the detection of partially overlapping hotword patterns, significantly reducing the miss rate.
-
-
 * **Resource Scheduling**: The detector operates in a single-threaded blocking mode, utilizing a signal mechanism to interrupt and return immediately upon a successful match.
+
+![ARSVOSK-ARCH](ASRVOSK.png)
 
 ## 1. Environment & Dependencies
 
